@@ -1,0 +1,82 @@
+{% schema %}
+{
+  "name": "Featured Products",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "product_list",
+      "id": "products",
+      "label": "Select Products",
+      "info": "Choose which products to feature"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section Title",
+      "default": "Featured Products"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured Products",
+      "category": "Products"
+    }
+  ]
+}
+{% endschema %}
+
+<div class="featured-products-section">
+  {% if section.settings.title != blank %}
+    <h2>{{ section.settings.title }}</h2>
+  {% endif %}
+
+  <div class="products-grid">
+    {% for product in section.settings.products %}
+      {% assign p = all_products[product] %}
+      {% if p %}
+        <div class="product-card">
+          <a href="{{ p.url }}">
+            <img src="{{ p.featured_image | img_url: 'medium' }}" alt="{{ p.title }}">
+            <h3>{{ p.title }}</h3>
+            {% if p.compare_at_price > p.price %}
+              <span class="price"><s>{{ p.compare_at_price | money }}</s> {{ p.price | money }}</span>
+            {% else %}
+              <span class="price">{{ p.price | money }}</span>
+            {% endif %}
+          </a>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+</div>
+
+<style>
+.featured-products-section {
+  text-align: center;
+  margin: 50px 0;
+}
+.products-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+.product-card {
+  width: 200px;
+  border: 1px solid #eee;
+  padding: 10px;
+  text-align: center;
+}
+.product-card img {
+  width: 100%;
+  height: auto;
+}
+.product-card h3 {
+  font-size: 16px;
+  margin: 10px 0 5px;
+}
+.price {
+  font-weight: bold;
+  color: #333;
+}
+</style>
