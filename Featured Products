@@ -29,7 +29,6 @@
   {% if section.settings.title != blank %}
     <h2>{{ section.settings.title }}</h2>
   {% endif %}
-
   <div class="products-grid">
     {% for product in section.settings.products %}
       {% assign p = all_products[product] %}
@@ -44,6 +43,7 @@
               <span class="price">{{ p.price | money }}</span>
             {% endif %}
           </a>
+<button class="add-to-cart-btn" data-variant-id="{{ p.variants.first.id }}">Add to Cart</button>
         </div>
       {% endif %}
     {% endfor %}
@@ -80,3 +80,37 @@
   color: #333;
 }
 </style>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const buttons = document.querySelectorAll('.add-to-cart-btn');
+
+  buttons.forEach(button => {
+    button.addEventListener('click', function(e) {
+      e.preventDefault();
+
+      const variantId = this.dataset.variantId;
+
+      fetch('/cart/add.js', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          id: variantId,
+          quantity: 1
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        alert(`${data.title} has been added to the cart!`);
+        // Optionally update cart drawer or cart count here
+      })
+      .catch(error => {
+        console.error('Error adding to cart:', error);
+        alert('Failed to add product to cart.');
+      });
+    });
+  });
+});
+</script>
